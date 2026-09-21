@@ -1,3 +1,4 @@
+import { version as appVersion } from "../package.json"
 import { useEffect, useRef, useState, useSyncExternalStore } from "react"
 import { ChevronDown, Download, History, Moon, Sun } from "lucide-react"
 import { DropdownMenu } from "radix-ui"
@@ -239,7 +240,7 @@ export default function App() {
           </Button>
           <span className="flex items-center gap-1 text-xs text-muted-foreground">
             <History className="size-3" aria-hidden />
-            v0.1
+            v{appVersion}
           </span>
         </div>
         <div className="flex items-center gap-2">
