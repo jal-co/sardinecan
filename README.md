@@ -63,3 +63,7 @@ React, Vite, Tailwind CSS, and Three.js. The editor layout, theme, controls, soc
 `npm test` checks template coordinates, text escaping, and upload replacement. Browser verification also needs to cover WebGL rendering, camera controls, downloads, and uploading a downloaded label. The application has no Playwright dependency.
 
 MIT. The reference tweet is inspiration; its branded artwork is not bundled.
+
+## Releases
+
+User-facing changes include a Changeset. The release workflow collects them into a version PR, updates the changelog and package version, and creates a GitHub release after that PR merges. Cloudflare deployments continue on every push to `main`. See [Contributing](CONTRIBUTING.md#releases) for the workflow and required GitHub setting.
