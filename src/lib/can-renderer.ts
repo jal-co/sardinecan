@@ -11,15 +11,15 @@ import {
   pullTabLayout,
 } from "./label"
 
-function roundedShape(width: number, height: number, radius: number) {
+function roundedContour(width: number, height: number, radius: number) {
   const x = -width / 2
   const y = -height / 2
-  const shape = new THREE.Shape()
-  shape.moveTo(x + radius, y)
-  shape.lineTo(x + width - radius, y)
-  shape.absarc(x + width - radius, y + radius, radius, -Math.PI / 2, 0, false)
-  shape.lineTo(x + width, y + height - radius)
-  shape.absarc(
+  const contour = new THREE.Shape()
+  contour.moveTo(x + radius, y)
+  contour.lineTo(x + width - radius, y)
+  contour.absarc(x + width - radius, y + radius, radius, -Math.PI / 2, 0, false)
+  contour.lineTo(x + width, y + height - radius)
+  contour.absarc(
     x + width - radius,
     y + height - radius,
     radius,
@@ -27,8 +27,8 @@ function roundedShape(width: number, height: number, radius: number) {
     Math.PI / 2,
     false,
   )
-  shape.lineTo(x + radius, y + height)
-  shape.absarc(
+  contour.lineTo(x + radius, y + height)
+  contour.absarc(
     x + radius,
     y + height - radius,
     radius,
@@ -36,14 +36,14 @@ function roundedShape(width: number, height: number, radius: number) {
     Math.PI,
     false,
   )
-  shape.lineTo(x, y + radius)
-  shape.absarc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false)
-  return shape
+  contour.lineTo(x, y + radius)
+  contour.absarc(x + radius, y + radius, radius, Math.PI, Math.PI * 1.5, false)
+  return contour
 }
 
 function lidGeometry(width: number, height: number, radius: number) {
   const geometry = new THREE.ShapeGeometry(
-    roundedShape(width, height, radius),
+    roundedContour(width, height, radius),
     48,
   )
   const position = geometry.getAttribute("position")
@@ -61,7 +61,7 @@ function rim(
   z: number,
   material: THREE.Material,
 ) {
-  const points = roundedShape(width, height, radius)
+  const points = roundedContour(width, height, radius)
     .getPoints(48)
     .slice(0, -1)
     .map((p) => new THREE.Vector3(p.x, p.y, z))
@@ -144,7 +144,7 @@ export class CanRenderer {
     light.shadow.bias = -0.0001
     this.scene.add(light)
     const body = new THREE.Mesh(
-      new THREE.ExtrudeGeometry(roundedShape(3.78, 2.58, 0.5), {
+      new THREE.ExtrudeGeometry(roundedContour(3.78, 2.58, 0.5), {
         depth: 0.59,
         bevelEnabled: true,
         bevelSegments: 4,
@@ -179,9 +179,9 @@ export class CanRenderer {
     this.can.add(back)
     this.can.add(rim(3.26, 2.01, 0.44, 0.014, -0.706, this.metal))
     const { width: tw, height: th } = PULL_TAB
-    const tabShape = new THREE.Shape()
-    tabShape.moveTo(-tw * 0.38, -th * 0.32)
-    tabShape.bezierCurveTo(
+    const tabContour = new THREE.Shape()
+    tabContour.moveTo(-tw * 0.38, -th * 0.32)
+    tabContour.bezierCurveTo(
       -tw * 0.5,
       -th * 0.3,
       -tw * 0.5,
@@ -189,8 +189,8 @@ export class CanRenderer {
       -tw * 0.38,
       th * 0.32,
     )
-    tabShape.lineTo(tw * 0.02, th * 0.46)
-    tabShape.bezierCurveTo(
+    tabContour.lineTo(tw * 0.02, th * 0.46)
+    tabContour.bezierCurveTo(
       tw * 0.62,
       th * 0.58,
       tw * 0.62,
@@ -198,7 +198,7 @@ export class CanRenderer {
       tw * 0.02,
       -th * 0.46,
     )
-    tabShape.closePath()
+    tabContour.closePath()
     const hole = new THREE.Path()
     hole.absellipse(
       tw * 0.12,
@@ -210,10 +210,10 @@ export class CanRenderer {
       false,
       0,
     )
-    tabShape.holes.push(hole)
+    tabContour.holes.push(hole)
     this.tab.add(
       new THREE.Mesh(
-        new THREE.ExtrudeGeometry(tabShape, {
+        new THREE.ExtrudeGeometry(tabContour, {
           depth: 3,
           bevelEnabled: true,
           bevelSegments: 3,
@@ -225,7 +225,7 @@ export class CanRenderer {
         this.tabMetal,
       ),
     )
-    for (const edge of [tabShape, hole]) {
+    for (const edge of [tabContour, hole]) {
       const points = edge
         .getPoints(64)
         .slice(0, -1)

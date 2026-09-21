@@ -60,7 +60,7 @@ export function CanCanvas({ settings, svg, locked, onReady, onError }: Props) {
 
   useEffect(() => {
     let live = true
-    void rendererRef.current?.setLabelSvg(svg).catch((error: unknown) => {
+    void rendererRef.current?.setLabelSvg(svg).catch((error) => {
       if (live)
         reportError(
           error instanceof Error
@@ -84,17 +84,24 @@ export function CanCanvas({ settings, svg, locked, onReady, onError }: Props) {
           : "3D sardine can preview. Drag to rotate, scroll to zoom, or use arrow keys to rotate."
       }
       onKeyDown={(event) => {
-        const moves: Record<string, [number, number]> = {
-          ArrowLeft: [-0.12, 0],
-          ArrowRight: [0.12, 0],
-          ArrowUp: [0, -0.12],
-          ArrowDown: [0, 0.12],
+        if (locked) return
+        switch (event.key) {
+          case "ArrowLeft":
+            rendererRef.current?.rotate(-0.12, 0)
+            break
+          case "ArrowRight":
+            rendererRef.current?.rotate(0.12, 0)
+            break
+          case "ArrowUp":
+            rendererRef.current?.rotate(0, -0.12)
+            break
+          case "ArrowDown":
+            rendererRef.current?.rotate(0, 0.12)
+            break
+          default:
+            return
         }
-        const move = moves[event.key]
-        if (move && !locked) {
-          event.preventDefault()
-          rendererRef.current?.rotate(...move)
-        }
+        event.preventDefault()
       }}
     />
   )
